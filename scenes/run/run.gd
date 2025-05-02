@@ -8,6 +8,7 @@ const SHOP_SCENE := preload("res://scenes/shop/shop.tscn")
 const TREASURE_SCENE := preload("res://scenes/treasure/treasure.tscn")
 const BESTIARY_SCENE := preload("res://scenes/bestiary/bestiary.tscn")
 const WIN_SCREEN_SCENE := preload("res://scenes/win_screen/win_screen.tscn")
+const MAIN_MENU_PATH := "res://scenes/ui/main_menu.tscn"
 
 @export var run_startup: RunStartup
 
@@ -19,6 +20,7 @@ const WIN_SCREEN_SCENE := preload("res://scenes/win_screen/win_screen.tscn")
 @onready var thread_tooltip: ThreadTooltip = %ThreadTooltip
 @onready var deck_button: CardPileOpener = %DeckButton
 @onready var deck_view: CardPileView = %DeckView
+@onready var pause_menu: PauseMenu = $PauseMenu
 
 @onready var battle_button: Button = %BattleButton
 @onready var campfire_button: Button = %CampfireButton
@@ -35,7 +37,12 @@ var character: CharacterStats
 func _ready() -> void:
 	if not run_startup:
 		return
-		
+	
+	pause_menu.save_and_quit.connect(
+		func():
+			get_tree().change_scene_to_file(MAIN_MENU_PATH)
+	)
+	
 	match run_startup.type:
 		RunStartup.Type.NEW_RUN:
 			character = run_startup.picked_character.create_instance()
