@@ -31,6 +31,7 @@ const MAIN_MENU_PATH := "res://scenes/ui/main_menu.tscn"
 
 var stats: RunStats
 var character: CharacterStats
+var save_data: SaveGame
 
 
 func _ready() -> void:
@@ -47,7 +48,7 @@ func _ready() -> void:
 			character = run_startup.picked_character.create_instance()
 			_start_run()
 		RunStartup.Type.CONTINUED_RUN:
-			print("TODO: load previous Run")
+			_load_run()
 
 
 func _start_run() -> void:
@@ -58,6 +59,35 @@ func _start_run() -> void:
 	
 	map.generate_new_map()
 	map.unlock_floor(0)
+	
+	save_data = SaveGame.new()
+	_save_run(true)
+
+
+func _save_run(was_on_map: bool) -> void:
+	save_data.run_stats = stats
+	save_data.char_stats = character
+	save_data.current_deck = character.deck
+	save_data.current_health = character.health
+	save_data.threads = thread_handler.get_all_threads()
+	save_data.last_room = map.last_room
+	save_data.map_data = map.map_data.duplicate()
+	save_data.floors_climbed = map.floors_climbed
+	save_data.was_on_map = was_on_map
+	save_data.save_data()
+
+
+func _load_run() -> void:
+	save_data = SaveGame.load_data()
+	assert(save_data, "Couldn't load last save")
+	
+	stats = save_data.run_stats
+	character = save_data.char_stats
+	character.deck = save_data.current_deck
+	character.health = save_data.current_health
+	thread_handler.add_threads(save_data.threads)
+	_setup_top_bar()
+	_setup_event_connections()
 
 
 func _change_view(scene: PackedScene) -> Node:
