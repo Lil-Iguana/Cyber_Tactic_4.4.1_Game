@@ -88,6 +88,10 @@ func _load_run() -> void:
 	thread_handler.add_threads(save_data.threads)
 	_setup_top_bar()
 	_setup_event_connections()
+	
+	map.load_map(save_data.map_data, save_data.floors_climbed, save_data.last_room)
+	if save_data.last_room and not save_data.was_on_map:
+		_on_map_exited(save_data.last_room)
 
 
 func _change_view(scene: PackedScene) -> Node:
