@@ -197,6 +197,7 @@ func _on_battle_won() -> void:
 	if map.floors_climbed == MapGenerator.FLOORS:
 		var win_screen := _change_view(WIN_SCREEN_SCENE) as WinScreen
 		win_screen.character = character
+		SaveGame.delete_data()
 	else:
 		_show_regular_battle_rewards()
 
