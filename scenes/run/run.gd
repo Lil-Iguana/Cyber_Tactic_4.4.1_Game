@@ -112,6 +112,8 @@ func _show_map() -> void:
 	
 	map.show_map()
 	map.unlock_next_rooms()
+	
+	_save_run(true)
 
 
 func _setup_event_connections() -> void:
@@ -200,6 +202,8 @@ func _on_battle_won() -> void:
 
 
 func _on_map_exited(room: Room) -> void:
+	_save_run(false)
+	
 	match room.type:
 		Room.Type.MONSTER:
 			_on_battle_room_entered(room)
