@@ -152,9 +152,9 @@ texture = SubResource("GradientTexture2D_b54su")
 [node name="GPUParticles2D" type="GPUParticles2D" parent="ParticlesLayer"]
 position = Vector2(65, 105)
 amount = 128
-process_material = SubResource("ParticleProcessMaterial_ytiwx")
 texture = ExtResource("2_yyc03")
 lifetime = 1.5
+process_material = SubResource("ParticleProcessMaterial_ytiwx")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
@@ -230,7 +230,7 @@ visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_omvee")
+&"": SubResource("AnimationLibrary_omvee")
 }
 
 [connection signal="pressed" from="UILayer/UI/HBoxContainer/Rest/RestButton" to="." method="_on_rest_button_pressed"]
