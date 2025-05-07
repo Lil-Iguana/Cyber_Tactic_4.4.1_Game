@@ -16,7 +16,7 @@ func generate_thread() -> void:
 			var already_had_it := thread_handler.has_thread(thread.id)
 			return can_appear and not already_had_it
 	)
-	found_thread = available_threads.pick_random()
+	found_thread = RNG.array_pick_random(available_threads)
 
 
 # Called from the AnimationPlayer, at the

@@ -27,7 +27,7 @@ func remove_card(card: Card) -> void:
 
 
 func shuffle() -> void:
-	cards.shuffle()
+	RNG.array_shuffle(cards)
 
 
 func clear() -> void:
