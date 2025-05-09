@@ -20,6 +20,10 @@ signal tooltip_hide_requested
 
 # Player-related events
 @warning_ignore("unused_signal")
+signal player_card_drawn
+@warning_ignore("unused_signal")
+signal player_multiple_cards_drawn
+@warning_ignore("unused_signal")
 signal player_hand_drawn
 @warning_ignore("unused_signal")
 signal player_hand_discarded
