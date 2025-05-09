@@ -62,6 +62,17 @@ func draw_cards(amount: int) -> void:
 	)
 
 
+func draw_cards_from_effect(amount: int) -> void:
+	var tween := create_tween()
+	for i in range(amount):
+		tween.tween_interval(HAND_DRAW_INTERVAL)
+		tween.tween_callback(draw_card)
+	tween.finished.connect(
+		func(): Events.player_multiple_cards_drawn.emit()
+	)
+	
+
+
 func discard_cards() -> void:
 	if hand.get_child_count() == 0:
 		Events.player_hand_discarded.emit()
