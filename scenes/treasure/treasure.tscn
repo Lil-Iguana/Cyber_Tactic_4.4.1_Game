@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://da6ocx485g0c7"]
+[gd_scene load_steps=22 format=3 uid="uid://da6ocx485g0c7"]
 
 [ext_resource type="Script" uid="uid://ddky077xerok0" path="res://scenes/treasure/treasure.gd" id="1_xmwdt"]
 [ext_resource type="Script" uid="uid://jie6cbv6kc3m" path="res://custom_resources/thread_passive.gd" id="2_3ynfn"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bceuqyw50fdpi" path="res://art/tile_0090.png" id="4_o8ugj"]
 [ext_resource type="Texture2D" uid="uid://bl74ak1f0n8cg" path="res://art/tile_0091.png" id="5_2qnwf"]
 [ext_resource type="Resource" uid="uid://c014g8rpo2k1t" path="res://threads/reinforced_block.tres" id="5_ypb2i"]
+[ext_resource type="Resource" uid="uid://chqxc7ly6cg54" path="res://threads/confusing_staff.tres" id="6_8auyv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_5bk8g"]
 font_size = 32
@@ -153,7 +154,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_xmwdt")
-treasure_thread_pool = Array[ExtResource("2_3ynfn")]([ExtResource("3_72l3w"), ExtResource("4_knoyn"), ExtResource("5_ypb2i")])
+treasure_thread_pool = Array[ExtResource("2_3ynfn")]([ExtResource("3_72l3w"), ExtResource("4_knoyn"), ExtResource("5_ypb2i"), ExtResource("6_8auyv")])
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -214,7 +215,7 @@ stretch_mode = 5
 [node name="AnimationPlayer" type="AnimationPlayer" parent="TreasureChest"]
 unique_name_in_owner = true
 libraries = {
-"": SubResource("AnimationLibrary_u5neh")
+&"": SubResource("AnimationLibrary_u5neh")
 }
 autoplay = "highlight"
 
@@ -222,10 +223,10 @@ autoplay = "highlight"
 position = Vector2(20, 29)
 emitting = false
 amount = 25
-process_material = SubResource("ParticleProcessMaterial_mty2b")
 texture = ExtResource("4_hk1q6")
 lifetime = 1.5
 one_shot = true
 explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_mty2b")
 
 [connection signal="gui_input" from="TreasureChest" to="." method="_on_treasure_chest_gui_input"]
