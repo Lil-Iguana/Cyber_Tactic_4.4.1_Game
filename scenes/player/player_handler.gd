@@ -28,8 +28,10 @@ func start_battle(char_stats: CharacterStats) -> void:
 	character.draw_pile = character.deck.custom_duplicate()
 	character.draw_pile.shuffle()
 	character.discard = CardPile.new()
+	character.exhaust_pile = CardPile.new()
 	threads.threads_activated.connect(_on_threads_activated)
 	player.status_handler.statuses_applied.connect(_on_statuses_applied)
+	Events.player_turn_ended.connect(_on_player_turn_ended)
 	start_turn()
 
 
@@ -38,17 +40,25 @@ func start_turn() -> void:
 	character.block = 0
 	character.reset_mana()
 	threads.activate_threads_by_type(ThreadPassive.Type.START_OF_TURN)
+	Events.start_of_turn_relics_activated.emit()
 
 
 func end_turn() -> void:
 	hand.disable_hand()
 	threads.activate_threads_by_type(ThreadPassive.Type.END_OF_TURN)
+	Events.end_of_turn_relics_activated.emit()
 
 
 func draw_card() -> void:
 	reshuffle_deck_from_discard()
-	hand.add_card(character.draw_pile.draw_card())
+	if hand.get_child_count() <= character.max_hand_size:
+		hand.add_card(character.draw_pile.draw_card())
+	else:
+		character.discard.add_card(character.draw_pile.draw_card())
+		Events.card_discarded.emit()
+		print("Hand full, discarding card.")
 	reshuffle_deck_from_discard()
+	Events.player_card_drawn.emit()
 
 
 func draw_cards(amount: int) -> void:
@@ -90,6 +100,50 @@ func discard_cards() -> void:
 	)
 
 
+func discard_card_with_signal(card: Card) -> void:
+	var card_to_discard: CardUI
+	for checked_card: CardUI in hand.get_children():
+		if checked_card.card == card:
+			card_to_discard = checked_card
+	if card_to_discard:
+		hand.discard_card(card_to_discard)
+		character.discard.add_card(card)
+		Events.card_discarded.emit()
+
+
+func exhaust_card_with_signal(card: Card) -> void:
+	var card_to_exhaust: CardUI
+	for checked_card: CardUI in hand.get_children():
+		if checked_card.card == card:
+			card_to_exhaust = checked_card
+	if card_to_exhaust:
+		card_to_exhaust.queue_free()
+		character.exhaust_pile.add_card(card)
+		Events.card_exhausted.emit()
+
+
+func return_to_top_deck(card: Card) -> void:
+	var card_to_return: CardUI
+	for checked_card: CardUI in hand.get_children():
+		if checked_card.card == card:
+			card_to_return = checked_card
+	card_to_return.queue_free()
+	character.draw_pile.add_card_to_top(card)
+	Events.card_returned_to_top_deck.emit(card)
+
+
+# Return a card from your hand to the top of the draw pile
+func return_to_bottom_deck(card: Card) -> void:
+	var card_to_return: CardUI
+	for checked_card: CardUI in hand.get_children():
+		if checked_card.card == card:
+			card_to_return = checked_card
+	card_to_return.queue_free()
+	character.draw_pile.add_card(card)
+	Events.card_returned_to_bottom_deck.emit(card)
+
+
+# Return a card from your hand to the bottom of the draw pile
 func reshuffle_deck_from_discard() -> void:
 	if not character.draw_pile.empty():
 		return
@@ -98,6 +152,17 @@ func reshuffle_deck_from_discard() -> void:
 		character.draw_pile.add_card(character.discard.draw_card())
 
 	character.draw_pile.shuffle()
+
+
+# This function forces all the cards in the discard to be reshuffled into a new drawpile.
+# Can only be triggered by the effect of a card or relic.
+func force_reshuffle() -> void:
+	while not character.discard.empty():
+		character.draw_pile.add_card(character.discard.draw_card())
+
+	character.draw_pile.shuffle()
+	Events.drawpile_shuffled.emit()
+	print("forced reshuffle")
 
 
 func _on_card_played(card: Card) -> void:
@@ -121,3 +186,7 @@ func _on_threads_activated(type: ThreadPassive.Type) -> void:
 			player.status_handler.apply_statuses_by_type(Status.Type.START_OF_TURN)
 		ThreadPassive.Type.END_OF_TURN:
 			player.status_handler.apply_statuses_by_type(Status.Type.END_OF_TURN)
+
+
+func _on_player_turn_ended() -> void:
+	discard_cards()
